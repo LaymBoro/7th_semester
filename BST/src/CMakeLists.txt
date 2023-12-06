@@ -8,5 +8,3 @@ add_executable(7th_semester
         BST.hpp
         main.cpp
 )
-
-

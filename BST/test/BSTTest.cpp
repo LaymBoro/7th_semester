@@ -30,10 +30,10 @@
 
 TEST(BSTTest, insertTest) {
     BST<int> tree = BST<int>();
-    Node<int> dataNode = Node<int>();
+    auto dataNode = Node<int>(10);
     ASSERT_EQ(nullptr, tree.root);
 
-    tree.insertByNode(dataNode);
+    tree.insertByNode(&dataNode);
     ASSERT_NE(nullptr, tree.root);
     ASSERT_EQ(nullptr, tree.root->getLeft());
     ASSERT_EQ(nullptr, tree.root->getRight());
@@ -51,14 +51,9 @@ TEST(BSTTest, insertTest) {
 TEST(BSTTest, findTest) {
     BST<int> tree = BST<int>();
     Node<int> dataNode = Node<int>();
-    tree.insertByNode(dataNode);
+    tree.insertByNode(&dataNode);
     tree.insertByData(5);
     tree.insertByData(15);
     ASSERT_EQ(5, tree.find(5));
     ASSERT_EQ(NULL, tree.find(20));
-}
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-
-    return RUN_ALL_TESTS();
 }

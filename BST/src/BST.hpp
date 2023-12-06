@@ -34,22 +34,31 @@ class BST {
 private:
     //Node<T>* root = nullptr;
 
-    void inserter(Node<T> *&node, Node<T> *current) {
-        if (current == nullptr) {
-            current = new Node<T>(node->getData());
-        } else if (node <= current) {
-            inserter(node,current->getLeft());
-        } else {
+    void inserter(Node<T> *node, Node<T> *current) {
+        if (root == nullptr) {
+            root = new Node<T>(node->getData());
+        }
+
+        else if (*node <= *current) {
+            if (current->getLeft() == nullptr) {
+                current->setLeft(node);
+            }
+            else {
+                inserter(node,current->getLeft());
+            }
+        }
+        else {
+            if (current->getRight() == nullptr) {
+                current->setRight(node);
+            }
             inserter(node,current->getRight());
         }
     }
 
     Node<T>* finder(Node<T> *node, Node<T> *current) {
-        if (current == nullptr) {
+        if (current == nullptr || *node == *current) {
             return current;
-        } else if (node == current) {
-            return current;
-        } else if (node <= current) {
+        } else if (*node <= *current) {
             finder(node,current->getLeft());
         } else {
             finder(node,current->getRight());
@@ -57,18 +66,22 @@ private:
     }
 
 public:
-    Node<T>* root = nullptr;
+    Node<T> *root = nullptr;
 
-    void insertByNode(Node<T> newNode){
+    void insertByNode(Node<T> *newNode){
         inserter(newNode, root);
     }
+
     void insertByData(T newData){
-        inserter(Node<T>(newData), root);
+        inserter(new Node<T>(newData), root);
     }
-    T find (T dataToFind){
+
+    T find (T dataToFind) {
         if (finder(new Node<T>(dataToFind), root) != nullptr){
             return finder(new Node<T>(dataToFind), root)->getData();
-        } else{return NULL;}
+        } else {
+            return NULL;
+        }
     }
 
     BST() = default;

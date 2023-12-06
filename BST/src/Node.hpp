@@ -34,7 +34,7 @@ template<typename T>
 class Node {
 private:
     T data;
-    Node<T>* left, *right, *parent;
+    Node<T> *left, *right, *parent;
 
 public:
     Node() = default;
@@ -46,6 +46,8 @@ public:
     Node<T>* getLeft() { return this->left; }
     Node<T>* getRight() { return this->right; }
     Node<T>* getParent() { return this->parent; }
+    void setLeft(Node<T> *child) { this->left = child; }
+    void setRight(Node<T> *child) { this->right = child; }
     friend std::ostream& operator<<(std::ostream& out, const Node<T>& node){
         std::stringstream buffer{};
         buffer << node.data;
@@ -56,5 +58,4 @@ public:
     bool operator!=(Node<T> const& other) const { return data != other.data; }
     bool operator>=(Node<T> const& other) const { return data >= other.data; }
     bool operator<=(Node<T> const& other) const { return data <= other.data; }
-
 };
