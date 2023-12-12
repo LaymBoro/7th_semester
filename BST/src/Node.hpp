@@ -41,7 +41,7 @@ private:
 
 public:
     Node(const Node<T>& other) = delete;
-    explicit Node(T data): left(nullptr), right(nullptr), parent(nullptr) { this->data = data; }
+    explicit Node(T data): left(nullptr), right(nullptr), parent(nullptr), data(data){}
     ~Node(){
         this->left = nullptr;
         this->right = nullptr;
@@ -61,9 +61,9 @@ public:
 		 * @param other - node to swap
 		*/
     void dataSwap(Node<T>* other){
-        Node<T>* tmp = new Node<T>(this->data);
+        auto tmp = this->data;
         this->data = other->data;
-        other->data = tmp->data;
+        other->data = tmp;
     }
         /**
 		 * @brief Operator left shift

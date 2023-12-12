@@ -32,7 +32,7 @@ class Node;
 template<typename T>
 class BST {
 private:
-    Node<T>* root;
+    Node<T>* root = nullptr;
         /**
 		 * @brief func to insert node in tree
 		 * @param node - node to insert
@@ -58,13 +58,15 @@ private:
 		 * @param current - buffer for recursion (default = root)
 		 * @return pointer on current obj
 		*/
-    Node<T>* finder(Node<T> *node, Node<T> *current) {
-        if (current == nullptr || *node == *current)
-            return current;
+    bool contains(Node<T> *node, Node<T> *current) {
+        if (current == nullptr)
+            return false;
+        else if (*node == *current)
+            return true;
         else if (*node < *current)
-            finder(node,current->left);
+            contains(node,current->left);
         else
-            finder(node,current->right);
+            contains(node,current->right);
     }
         /**
 		 * @brief func to find minimum node in (sub)tree
@@ -91,39 +93,30 @@ private:
         /**
 		 * @brief output in increasing order
 		 * @param node - root node of (sub)tree (default = root)
+         * @param out - output stream
+         * @return string of nodes in increasing order
 		*/
-    void inOrderTraversal(Node<T>* node) {
+    std::string inOrderTraversal(Node<T>* node, std::ostringstream& out) {
         if (node != nullptr) {
-            inOrderTraversal(node->left);
-            std::cout << *node;
-            inOrderTraversal(node->right);
+            inOrderTraversal(node->left, out);
+            out << *node;
+            inOrderTraversal(node->right, out);
         }
+        return out.str();
     }
         /**
-		 * @brief output in decreasing order
+		 * @brief output in post order
 		 * @param node - root node of (sub)tree (default = root)
+         * @param out - output stream
+         * @return string of nodes in post order
 		*/
-    void postOrderTraversal(Node<T>* node) {
+        std::string postOrderTraversal(Node<T>* node, std::ostringstream& out) {
         if (node != nullptr) {
-            postOrderTraversal(node->left);
-            postOrderTraversal(node->right);
-            std::cout << *node;
+            postOrderTraversal(node->left, out);
+            postOrderTraversal(node->right, out);
+            out << *node;
         }
-    }
-        /**
-		 * @brief output in tree-like form
-		 * @param node - root node of (sub)tree (default = root)
-		 * @param level - for illustrate height of tree
-		*/
-    void printer(Node<T>* node, int level) {
-        if (node == nullptr)
-            return;
-        printer(node->right, level + 1);
-        for (int i = 0; i < level; ++i) {
-            std::cout << "   ";
-        }
-        std::cout << *node << "\n";
-        printer(node->left, level + 1);
+        return out.str();
     }
         /**
 		 * @brief func to convert subtree root into leaf
@@ -146,14 +139,14 @@ private:
 		 * @param data - key to delete
          * @param root - root node of (sub)tree (default = root)
 		*/
-    void nodeRemover(const T& data, Node<T>* current) {
-        if (finder(new Node<T>(data), current) == nullptr)
+    void nodeRemover(Node<T>* node, Node<T>* current) {
+        if (contains(node, current) == false)
             return;
         else{
-            if (data > current->data)
-                nodeRemover(data, current->right);
-            else if (data < current->data)
-                nodeRemover(data, current->left);
+            if (node->data > current->data)
+                nodeRemover(node, current->right);
+            else if (node->data < current->data)
+                nodeRemover(node, current->left);
             else{
                 delete subtreeToLeaf(current);
             }
@@ -172,46 +165,55 @@ private:
     }
 public:
     BST() { this->root = nullptr; }
-    Node<T>* getRoot(){ return this->root; }
+    Node<T>* getRoot() { return this->root; }
     Node<T>* getMin() { return findMin(this->root); }
     Node<T>* getMax() { return findMax(this->root); }
         /**
 		 * @brief interface for inserter
 		 * @param newData - key to insert
 		*/
-    void insertNode(const T& newData) { this->root = inserter(new Node<T> (newData), this->root, nullptr); }
+    void insertNode(const T& newData) {
+        this->root = inserter(new Node<T>(newData), this->root, nullptr);
+    }
         /**
-		 * @brief interface for finder
+		 * @brief interface for contains
 		 * @param dataToFind - key to search
          * @return bool - flag - is tree contains it or not
 		*/
     bool isContains (T dataToFind) {
-        if (finder(new Node<T>(dataToFind), this->root) != nullptr)
-            return true;
-        else
-            return false;
+        Node<T>* tmp = new Node<T>(dataToFind);
+        bool is = contains(tmp, this->root);
+        delete tmp;
+        return is;
     }
         /**
 		 * @brief interface for in increase order output
+         * @return string of nodes in increasing order
 		*/
-    void inOrderPrint() { inOrderTraversal(this->root); }
+        std::string inOrderPrint() {
+            std::ostringstream buffer{};
+            inOrderTraversal(this->root, buffer);
+            return buffer.str();
+        }
         /**
 		 * @brief interface for in decrease order output
+         * @return string of nodes in increasing order
 		*/
-    void postOrderPrint() { postOrderTraversal(this->root); }
-        /**
-		 * @brief interface for tree-like output
-		*/
-    void printTree() { printer(this->root, 0); }
+        std::string postOrderPrint() {
+            std::ostringstream buffer{};
+            postOrderTraversal(this->root, buffer);
+            return buffer.str();
+        }
         /**
 		 * @brief interface for deleting node from tree
 		*/
-    void deleteNode(const T& data) { nodeRemover(data, this->root); }
+    void deleteNode(const T& data) {
+        Node<T>* tmp = new Node<T>(data);
+        nodeRemover(tmp, this->root);
+        delete tmp;
+    }
         /**
 		 * @brief tree destructor
 		*/
     ~BST() { treeRemover(this->root); }
 };
-
-
-
